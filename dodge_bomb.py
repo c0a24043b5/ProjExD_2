@@ -31,6 +31,7 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
 
 def game_over(screen: pg.Surface, bg_img: pg.Surface) -> None:
     """
+    引数:画面Surface
     ゲームオーバー画面を表示する関数
     """
     gameover = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)  # アルファ値を持つSurfaceを作成
