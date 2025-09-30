@@ -79,6 +79,26 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     return bb_imgs, bb_accs
 
 
+def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    """
+    飛ぶ方向に応じてこうかとん画像を切り替える
+    """
+    kk_img0 = pg.image.load("fig/3.png") 
+    kk_img1 = pg.transform.flip(kk_img0, True, False)
+    kk_imgs = {
+        (0, 0):    kk_img0,                                 # 静止（左向きのまま）
+        (5, 0):    kk_img1,                                 # 右（反転させた画像）
+        (5, -5):   pg.transform.rotozoom(kk_img1, 45, 1.0), # 右上
+        (0, -5):   pg.transform.rotozoom(kk_img1, 90, 1.0), # 上
+        (-5, -5):  pg.transform.rotozoom(kk_img0, -45, 1.0),# 左上
+        (-5, 0):   kk_img0,                                 # 左（元の画像）
+        (-5, 5):   pg.transform.rotozoom(kk_img0, 45, 1.0), # 左下
+        (0, 5):    pg.transform.rotozoom(kk_img0, 90, 1.0), # 下
+        (5, 5):    pg.transform.rotozoom(kk_img1, -45, 1.0) # 右下
+    }
+    return kk_imgs
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -92,10 +112,12 @@ def main():
 
     # 課題2呼び出し
     bb_imgs, bb_accs = init_bb_imgs()
-    # bb_img = bb_imgs[0]  # 最初の爆弾画像
     bb_rct = bb_img.get_rect()
     bb_rct.centerx = random.randint(0, WIDTH)
     bb_rct.centery = random.randint(0, HEIGHT)
+
+    #課題3呼び出し
+    kk_imgs = get_kk_imgs()
 
     vx, vy = +5, +5  # 爆弾の速度
     clock = pg.time.Clock()
@@ -116,7 +138,6 @@ def main():
         avy = vy*bb_accs[min(tmr//500, 9)]
         bb_img = bb_imgs[min(tmr//500, 9)]
 
-
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         for key,mv in DELTA.items():
@@ -131,6 +152,10 @@ def main():
         #     sum_mv[0] -= 5
         # if key_lst[pg.K_RIGHT]:
         #     sum_mv[0] += 5
+
+        #課題3
+        kk_img = kk_imgs.get(tuple(sum_mv), kk_imgs[(0, 0)])
+
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
