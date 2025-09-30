@@ -51,7 +51,37 @@ def main():
                 return
         screen.blit(bg_img, [0, 0]) 
         if kk_rct.colliderect(bb_rct):  # 衝突判定
-            return # ゲームオーバー
+            # 背景画像を半透明にして表示
+            gameover = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)  # アルファ値を持つSurfaceを作成
+            gameover.blit(bg_img, (0, 0))  # 背景画像を貼り付け
+            gameover.fill((0, 0, 0, 128))  # 半透明の黒いフィルターを貼り付け
+            screen.blit(gameover, (0, 0))
+
+            # "Game Over"のテキストを表示
+            font = pg.font.Font(None, 80)
+            text = font.render("Game Over", True, (255, 255, 255))
+            text_rect = text.get_rect()
+            text_rect.center = WIDTH // 2, HEIGHT // 2
+            screen.blit(text, text_rect)
+            
+            # 泣いているこうかとんの画像を左右に2つ表示
+            cry_kk_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+            
+            # 左側のこうかとん
+            cry_kk_rect_left = cry_kk_img.get_rect()
+            cry_kk_rect_left.center = WIDTH // 2 - 200, HEIGHT // 2
+            screen.blit(cry_kk_img, cry_kk_rect_left)
+
+            # 右側のこうかとん
+            cry_kk_rect_right = cry_kk_img.get_rect()
+            cry_kk_rect_right.center = WIDTH // 2 + 200, HEIGHT // 2
+            screen.blit(cry_kk_img, cry_kk_rect_right)
+
+            pg.display.update() # 画面を更新
+            
+            pg.time.wait(5000) # 5秒間待機
+            
+            return # ゲーム終了
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
